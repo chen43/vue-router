@@ -23,16 +23,16 @@ const Bar = {
 // - return false to prevent scroll
 const scrollBehavior = function (to, from, savedPosition) {
   if (savedPosition) {
-    // savedPosition is only available for popstate navigations.
+    // 如果是通过前进或者后退跳转的，保持页面原先位置
     return savedPosition
   } else {
     const position = {}
 
-    // scroll to anchor by returning the selector
+    // 通过返回一个selector，滚动到一个锚点。
     if (to.hash) {
       position.selector = to.hash
 
-      // specify offset of the element
+      // 滚动到指定的位置
       if (to.hash === '#anchor2') {
         position.offset = { y: 100 }
       }
@@ -44,11 +44,13 @@ const scrollBehavior = function (to, from, savedPosition) {
 
       // if the returned position is falsy or an empty object,
       // will retain current scroll position.
+      //如果返回的position是falsy或者是一个空对象的话，将会返回当前滚动条的位置
       return false
     }
 
     return new Promise(resolve => {
       // check if any matched route config has meta that requires scrolling to top
+      //检测所有匹配的路由的元信息配置，如果存在scroollToTop并且是true的话
       if (to.matched.some(m => m.meta.scrollToTop)) {
         // coords will be used if no selector is provided,
         // or if the selector didn't match any element.
@@ -57,6 +59,7 @@ const scrollBehavior = function (to, from, savedPosition) {
       }
 
       // wait for the out transition to complete (if necessary)
+      //等待我们的过渡动画完成
       this.app.$root.$once('triggerScroll', () => {
         // if the resolved position is falsy or an empty object,
         // will retain current scroll position.
